@@ -2,21 +2,19 @@
 # ArcticWolf
 <img src="https://img.shields.io/badge/Python-3.7-green" alt="Python" />  <img src="https://img.shields.io/badge/State-developing-blue" alt="State" />  <img src="https://img.shields.io/badge/Platform-Windows-orange" alt="Platform" />  <img src="https://img.shields.io/badge/License-Apache2.0-red" alt="State" />
 
+ArcticWolf ia a bot controller under python which is very easy-to-use
+All you need is a computer and an Intranet Penetration software (frp) to set up your botnet to launch ddos attacks!
 
 ## Table of Contents
 
-- [Introduce](#introduce)
+- [Highlights](#Hightlights)
 - [Dependings](#dependings)
 - [Usage](#usage)
 - [Maintainers](#maintainers)
 - [Bugs&reports](#reports)
 - [License](#license)
 
-## Introduce
-
-ArcticWolf ia a bot controller under python which is very easy-to-use
-All you need is a computer and an Intranet Penetration software (frp) to set up your botnet to launch ddos attacks!
-### Highlights
+## Highlights
 · No server required  
 · Very easy to use  
 · Use.py files for dissemination  
