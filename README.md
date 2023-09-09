@@ -1,8 +1,7 @@
 
-# PINGPONG
+# ArcticWolf
 <img src="https://img.shields.io/badge/Python-3.7-green" alt="Python" />  <img src="https://img.shields.io/badge/State-developing-blue" alt="State" />  <img src="https://img.shields.io/badge/Platform-Windows-orange" alt="Platform" />  <img src="https://img.shields.io/badge/License-Apache2.0-red" alt="State" />
 
- PINGPONG is a windows attack framework under python which is very easy-to-use
 
 ## Table of Contents
 
@@ -15,33 +14,27 @@
 
 ## Introduce
 
-Do you know metasploit? PINGPONG is a framework like this.The difference is: You will be able to use PINGPONG, if you can read English!  
-PINGPONG framework is simpler to use because the only thing you need to do is to type a number in the menu to choose the usage instead of command.  
-### Advantage of PINGPONG  
-· Very easy to use  
-· Simpler programming  
-### Shortcomings  
-· Only windows  
-· Huge payload  
-· Less features  
-· bugs  
-· Grammar and spelling mistakes(XD)  
+ArcticWolf ia a bot controller under python which is very easy-to-use
+All you need is a computer and an Intranet Penetration software (frp) to set up your botnet to launch ddos attacks!
+### Highlights
+· No server required
+· Very easy to use
+· Use.py files for dissemination
+(Infect only hosts where python is installed)
+· Support boot self-start
+
 ## Dependings
-  __All the Dependings below must be installed before using PINGPONG__  
-    pyinstaller 5.6.2  
-    upx 4.0  
-    wmi 1.5.1  
-    pywin32 305  
-    servicemanager 2.0  
-    psutil 5.9.4  
-    (and python 3.7+)  
+    pyinstaller 5.13.2
+    upx 4.0   
+    pywin32 306
+    requests 2.31.0
+    (python 3.7+, best for 3.11)  
 
 ## Usage  
-   1.set the payload options you want at 'settings'  
-   2.make payloads at 'payloads', using surrent settings  
-   3.start a handler(listener)  
-   4.get a PINGPONG session  
-   5.control the host with PINGPONG!  
+  1. Input your ip and port (ex:127.0.0.1, 1234)
+  2. Get the public network ip and port using frp and input it (ex:1.2.3.4, 12345)
+  3. generate .py virus (using command : gen_py) and spread the virus
+  4. use ddos attack method to attack!
      
    
 ## Maintainers
@@ -49,9 +42,9 @@ PINGPONG framework is simpler to use because the only thing you need to do is to
 
 ## Reports
 
-Please send bug reports and feature requests through [github issue tracker](https://github.com/DWL-stu/PINGPONG/issues). PINGPONG is currently under development now and it's open to any constructive suggestions.
+Please send bug reports and feature requests through [github issue tracker](https://github.com/DWL-stu/ArcticWolf/issues). ArcticWolf is currently under development now and it's open to any constructive suggestions.
 
  
 ## License
-The Pingpong Framework is released under [apache2 license](https://github.com/DWL-stu/PINGPONG/License).
+The ArcticWolf Framework is released under [apache2 license](https://github.com/DWL-stu/ArcticWolf/License).
 
