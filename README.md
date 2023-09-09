@@ -17,11 +17,11 @@
 ArcticWolf ia a bot controller under python which is very easy-to-use
 All you need is a computer and an Intranet Penetration software (frp) to set up your botnet to launch ddos attacks!
 ### Highlights
-· No server required
-· Very easy to use
-· Use.py files for dissemination
+· No server required  
+· Very easy to use  
+· Use.py files for dissemination  
 (Infect only hosts where python is installed)
-· Support boot self-start
+· Support boot self-start  
 
 ## Dependings
     pyinstaller 5.13.2
