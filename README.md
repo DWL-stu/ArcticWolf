@@ -1,6 +1,6 @@
 
 # ArcticWolf
-<img src="https://img.shields.io/badge/Python-3.7-green" alt="Python" />  <img src="https://img.shields.io/badge/State-developing-blue" alt="State" />  <img src="https://img.shields.io/badge/Platform-Windows-orange" alt="Platform" />  <img src="https://img.shields.io/badge/License-Apache2.0-red" alt="State" />
+<img src="https://img.shields.io/badge/Python-3.7+-green" alt="Python" />  <img src="https://img.shields.io/badge/State-developing-blue" alt="State" />  <img src="https://img.shields.io/badge/Platform-Windows-orange" alt="Platform" />  <img src="https://img.shields.io/badge/License-Apache2.0-red" alt="License" />  <img src="https://img.shields.io/badge/--red" alt="License" />
 
 ArcticWolf ia a bot controller under python which is very easy-to-use
 All you need is a computer and an Intranet Penetration software (frp) to set up your botnet to launch ddos attacks!
@@ -25,7 +25,6 @@ All you need is a computer and an Intranet Penetration software (frp) to set up 
     pyinstaller 5.13.2
     upx 4.0   
     pywin32 306
-    requests 2.31.0
     (python 3.7+, best for 3.11)  
 
 ## Usage  

