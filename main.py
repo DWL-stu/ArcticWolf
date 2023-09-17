@@ -301,9 +301,9 @@ def send(com : str):
             History_write(f'Bot No.{No} Disconnected')
             print_warn('Shuting down all the connections')
             print_normal(f'Bot No.{No} Disconnected')
-            del datasock_list[No]
             del last_Heartbeat[i]
             No += 1
+        datasock_list.clear()
     else:
         for i in datasock_list.values():
             i.sendall(com.encode('utf-8'))
