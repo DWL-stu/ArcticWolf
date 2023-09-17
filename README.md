@@ -1,50 +1,48 @@
+<h1 align="center">ArcticWolf🐺 -- use a computer and a frp to set up your botnet and launch ddos attacks!</h1>
+***
+<em><h5 align="center">virus generater, botnet controller and DDOS attacker under python3</h5></em>
+<p align="center">
+<img src="https://img.shields.io/badge/Python-3.7+-green" alt="Python" />  <img src="https://img.shields.io/badge/State-developing-blue" alt="State" />
+<img src="https://img.shields.io/badge/Platform-Windows-orange" alt="Platform" />
+<img src="https://img.shields.io/badge/License-Apache2.0-red" alt="License" /></p>
 
-# ArcticWolf
-<img src="https://img.shields.io/badge/Python-3.7+-green" alt="Python" />  <img src="https://img.shields.io/badge/State-developing-blue" alt="State" />  <img src="https://img.shields.io/badge/Platform-Windows-orange" alt="Platform" />  <img src="https://img.shields.io/badge/License-Apache2.0-red" alt="License" />  <img src="https://img.shields.io/badge/--red" alt="License" />
 
-ArcticWolf ia a bot controller under python which is very easy-to-use
-All you need is a computer and an Intranet Penetration software (frp) to set up your botnet to launch ddos attacks!
+## 📸Highlights
+* 🛎️No server required
+* 😜Very easy to use  
+* 🌞Highly customized viruses
+* 🌐Able to launch UDPflood, HTTPflood, ICMPflood attacks
 
-## Table of Contents
+## 📕Getting started
+ 🥰**Requirements**  
+* psutil 5.9.5
+* pyinstaller 5.13.2
+* upx 4.0
+* pywin32 306
+* (python 3.7+)
 
-- [Highlights](#Hightlights)
-- [Dependings](#dependings)
-- [Usage](#usage)
-- [Maintainers](#maintainers)
-- [Bugs&reports](#reports)
-- [License](#license)
+😈**Usage**  
+* Input your ip and port (ex:127.0.0.1, 1234)
+* Get the public network ip and port using frp and input it (ex:1.2.3.4, 12345)
+* generate .py virus (using command : gen_exe) and spread the virus with removable disk
+* use ddos attack method to attack!  
 
-## Highlights
-· No server required  
-· Very easy to use  
-· Use.py files for dissemination  
-(Infect only hosts where python is installed)
-· Support boot self-start  
-
-## Dependings
-    pyinstaller 5.13.2
-    upx 4.0   
-    pywin32 306
-    (python 3.7+, best for 3.11)  
-
-## Usage  
-  ### Basic Usage
-  1. Input your ip and port (ex:127.0.0.1, 1234)
-  2. Get the public network ip and port using frp and input it (ex:1.2.3.4, 12345)
-  3. generate .py virus (using command : gen_py) and spread the virus
-  4. use ddos attack method to attack!
-  The log will be write in ./Data/History.config
-  ### Set your own config
-  set your own config at ./Data/settings.json
+🦠**virus settings**  
+* set your own config at ./Data/settings.json
+  * Threads_num : number of threads
+  * Attribute_hide : file attribute hide
+  * self_starting : Modify the registry to implement self-start
+  * etc.
+* The log will be recorded in ./Data/History.config
      
-## Maintainers
+## 🦸Maintainers
 [@D0WE1L1N](https://github.com/Duweilin).
 
-## Reports
+## 🤝Reports
 
 Please send bug reports and feature requests through [github issue tracker](https://github.com/DWL-stu/ArcticWolf/issues). ArcticWolf is currently under development now and it's open to any constructive suggestions.
 
  
-## License
+## 📃License
 The ArcticWolf Framework is released under [apache2 license](https://github.com/DWL-stu/ArcticWolf/License).
 

