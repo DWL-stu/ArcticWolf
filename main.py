@@ -1,3 +1,6 @@
+# -*- coding:utf-8 -*-
+# @FileName  :main.py
+# @Author    :D0WE1L1N
 import threading, socket, time, json
 from sys import path
 from platform import system as system_type
@@ -215,7 +218,13 @@ def History_write(string, _type='I'):
     history_file.flush()
 # 保持连接&心跳系统
 def tcplink():
-    global last_Heartbeat
+    global last_Heartbeat, datasock_list
+    def disconnected(_type, No, sock):
+        History_write(f"Bot No.{No} disconnected.", _type)
+        print_error(f"Bot No.{No} disconnected.")
+        sock.close()
+        del datasock_list[No]
+        del last_Heartbeat[sock]
     while True:
         # try:
         #     recvdata = sock.recv(buffsize).decode('utf-8')
@@ -229,29 +238,25 @@ def tcplink():
         #     # datasock_list.remove(sock)
         #     break
         try:
+            if datasock_list == {}:
+                continue
             if settings_data['BotNet']['Heartbeat']:
                 for sock in list(last_Heartbeat.keys()):
                     No = [k for k,v in datasock_list.items() if v==sock][0]
-                    def disconnected(_type):
-                        History_write(f"Bot No.{No} disconnected.", _type)
-                        sock.close()
-                        del datasock_list[No]
-                        del last_Heartbeat[sock]
                     try:
                         if time.time() - last_Heartbeat[sock] > 20:  # 20秒内没有收到心跳消息，判断客户端掉线
-                            disconnected('I')
+                            disconnected('I', No, sock)
                             break
                         send('heartbeat')  # 发送心跳消息
                         last_Heartbeat = recv('Time')
                         time.sleep(5)  # 每隔5秒发送一次心跳消息
                     except Exception as e:
-                        print_error(f'Error of No.{No} : {e}')
-                        disconnected('E')
+                        disconnected('E', No, sock)
                         break
             else:
                 return True
         except Exception as e:
-            print_error('An error occured: ' + str(e))
+            pass
 # 启动socket
 def run():
     while True:

