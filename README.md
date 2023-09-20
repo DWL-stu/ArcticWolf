@@ -43,5 +43,5 @@ Please send bug reports and feature requests through [github issue tracker](http
 
  
 ## 📃License
-The ArcticWolf Framework is released under [apache2 license](https://github.com/DWL-stu/ArcticWolf/License).
+The ArcticWolf attack script is released under [MIT license](https://github.com/DWL-stu/ArcticWolf/License).
 
