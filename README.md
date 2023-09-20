@@ -1,10 +1,10 @@
 <h1 align="center">ArcticWolf🐺 -- use a computer and a frp to set up your botnet and launch ddos attacks!</h1>
-<em><h5 align="center">virus generater, botnet controller and DDOS attacker under python3</h5></em>
+<em><h3 align="center">The easy and fast way to organize a botnet for ddos and launch an attack</h3></em>
 <p align="center">
 <img src="https://img.shields.io/badge/Python-3.7+-green" alt="Python" />  <img src="https://img.shields.io/badge/State-developing-blue" alt="State" />
 <img src="https://img.shields.io/badge/Platform-Windows-orange" alt="Platform" />
 <img src="https://img.shields.io/badge/License-Apache2.0-red" alt="License" /></p>
-
+<em><h5 align="center">virus generater, botnet controller and DDOS attacker under python3</h5></em>
 
 ## 📸Highlights
 * 🛎️No server required
