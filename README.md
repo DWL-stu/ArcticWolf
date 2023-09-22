@@ -13,12 +13,25 @@
 * 🌐Able to launch UDPflood, HTTPflood, ICMPflood attacks
 
 ## 📕Getting started
- 🥰**Requirements**  
+🥰**Requirements**  
 * psutil 5.9.5
 * pyinstaller 5.13.2
 * upx 4.0
 * pywin32 306
-* (python 3.7+)
+* (python 3.7+)  
+
+*command to install all :*
+> pip install psutil==5.9.5 pyinstaller==5.13.2 pywin32==306
+
+👋**Install & Start**
+* Install
+```sh
+git clone https://github.com/DWL-stu/ArcticWolf.git
+```
+* Start
+```sh
+python main.py
+```
 
 😈**Usage**  
 * Input your ip and port (ex:127.0.0.1, 1234)
@@ -31,6 +44,7 @@
   * Threads_num : number of threads
   * Attribute_hide : file attribute hide
   * self_starting : Modify the registry to implement self-start
+  * Password : Password to connect the botnet
   * etc.
 * The log will be recorded in ./Data/History.config
      
