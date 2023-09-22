@@ -20,9 +20,10 @@
 * pywin32 306
 * (python 3.7+)  
 
-*command to install all :*
-> pip install psutil==5.9.5 pyinstaller==5.13.2 pywin32==306
-
+command to install all :
+```sh
+pip install psutil==5.9.5 pyinstaller==5.13.2 pywin32==306
+```
 👋**Install & Start**
 * Install
 ```sh
