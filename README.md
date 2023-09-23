@@ -14,7 +14,6 @@
 
 ## 📕Getting started
 🥰**Requirements**  
-* psutil 5.9.5
 * pyinstaller 5.13.2
 * upx 4.0
 * pywin32 306

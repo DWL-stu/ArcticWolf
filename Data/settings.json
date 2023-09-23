@@ -1,0 +1,1 @@
+{"BotNet": {"Default_ip": "127.0.0.1", "Default_port": 6240, "Heartbeat": true, "Buffsize": 512, "Password": "oARbGV0Px66oNbhk"}, "Bots": {"Threads_num": 10, "Attribute_hide": true, "Self_starting": true, "Attack_delay": 0.3}}

