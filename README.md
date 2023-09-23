@@ -15,13 +15,13 @@
 ## 📕Getting started
 🥰**Requirements**  
 * pyinstaller 5.13.2
-* upx 4.0
+* upx 4.0 (for best)
 * pywin32 306
 * (python 3.7+)  
 
 command to install all :
 ```sh
-pip install psutil==5.9.5 pyinstaller==5.13.2 pywin32==306
+pip install pyinstaller==5.13.2 pywin32==306
 ```
 👋**Install & Start**
 * Install
@@ -59,3 +59,4 @@ Please send bug reports and feature requests through [github issue tracker](http
 ## 📃License
 The ArcticWolf attack script is released under [MIT license](https://github.com/DWL-stu/ArcticWolf/License).
 
+## ⭐️Leave a star if you like this project
