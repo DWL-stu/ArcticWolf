@@ -14,10 +14,10 @@
 
 ## 📕Getting started
 🥰**Requirements**  
-* pyinstaller 5.13.2
-* upx 4.0 (for best)
-* pywin32 306
-* (python 3.7+)  
+* [pyinstaller 5.13.2](https://github.com/pyinstaller/pyinstaller)
+* [upx 4.0 (for best)](https://github.com/upx/upx)
+* [pywin32 306](https://github.com/mhammond/pywin32)
+* [python 3.7](https://python.org)
 
 command to install all :
 ```sh
