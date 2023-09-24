@@ -59,4 +59,4 @@ Please send bug reports and feature requests through [github issue tracker](http
 ## 📃License
 The ArcticWolf attack script is released under [MIT license](https://github.com/DWL-stu/ArcticWolf/License).
 
-## ⭐️Leave a star if you like this project
+**⭐️Leave a star if you like this project**
