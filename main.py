@@ -93,20 +93,28 @@ def post_cmd():
         print_good(f"{name+'.py'} virus generated successfully")
         return name
     def reload():
-        '''Method to reload the settings'''
-        global settings_data, buffsize, last_Heartbeat, Password
-        Heartbeat_open_before = settings_data['BotNet']['Heartbeat']
-        with open("./Data/settings.json", 'r') as f:
-            settings_data = json.load(f)
-        if settings_data['BotNet']['Heartbeat'] and not Heartbeat_open_before: # check if the heartbeat system is opened
-            print_normal('Heartbeat system started')
-            last_Heartbeat = {}
-            threading.Thread(target=tcplink, args=()).start()
-        buffsize = settings_data['BotNet']['Buffsize']
-        if settings_data['BotNet']['Password'] != Password:
-            print_warn(f'Password change from {Password} to {settings_data["BotNet"]["Password"]}')
-            Password = settings_data['BotNet']['Password']
-        print_normal('Settings data reloaded')
+        try:
+            '''Method to reload the settings'''
+            global settings_data, buffsize, last_Heartbeat, Password
+            Heartbeat_open_before = settings_data['BotNet']['Heartbeat']
+            with open("./Data/settings.json", 'r') as f:
+                settings_data_tmp = json.load(f)
+            if not check_data_in_settings(settings_data_tmp):
+                return True # Something in settings is wrong
+            else:
+                settings_data = settings_data_tmp # change the settings
+            if settings_data['BotNet']['Heartbeat'] and not Heartbeat_open_before: # check if the heartbeat system is opened
+                print_normal('Heartbeat system started')
+                last_Heartbeat = {}
+                threading.Thread(target=tcplink, args=()).start()
+            buffsize = settings_data['BotNet']['Buffsize']
+            if settings_data['BotNet']['Password'] != Password:
+                print_warn(f'Password change from {Password} to {settings_data["BotNet"]["Password"]}')
+                Password = settings_data['BotNet']['Password']
+            print_normal('Settings data reloaded')
+        except Exception as e:
+            print_error(f'An error occured : {e}')
+            print_warn('Reload failed')
     def change_password(new_password : str):
         '''Method for changing password of the botnet'''
         global Password
@@ -260,8 +268,11 @@ def post_cmd():
 # write message to the log file
 def History_write(string, _type='I'):
     global history_file
-    history_file.writelines(f"({_type})[{time.strftime('%Y-%m-%d %H:%M:%S',time.localtime())}] : {string}\n")
-    history_file.flush()
+    try:
+        history_file.writelines(f"({_type})[{time.strftime('%Y-%m-%d %H:%M:%S',time.localtime())}] : {string}\n")
+        history_file.flush()
+    except IOError:
+        print_error("Missing history file, failed to write log")
 def tcplink():
     '''Heartbeat system'''
     global last_Heartbeat, datasock_list
@@ -406,7 +417,6 @@ def recv(mode : str):
     else:
         raise f'Wrong mode error, wrond mode {mode} was given'
     return recv_dict # The content or time returned by each machine is recorded
-
 def check_input(input_str, mode, is_default=True):
     '''
     check the data is right(ip, port)
@@ -436,10 +446,45 @@ def check_input(input_str, mode, is_default=True):
         print_error(f"{input_str} error, please enter again")
         var = check_input(input_str, mode, is_default)    
         return var
+def check_data_in_settings(settings_dict):
+    '''check the datas in settings'''
+    try:
+        correct_type_of_settings = {
+            'Default_ip' : str,
+            'Default_port' : int,
+            'Heartbeat' : bool,
+            'Buffsize' : int,
+            'Password' : str,
+            'Threads_num' : int,
+            'Attribute_hide' : bool,
+            'Self_starting' : bool,
+            'Attack_delay' : float
+            # correct type of the settings
+        }
+        settings_dict_in_type = {}
+        for sub_dicts in settings_dict.keys():
+            for key in settings_dict[sub_dicts].keys():
+                settings_dict_in_type[key] = type(settings_dict[sub_dicts][key]) # get type dict for settings
+        # Now compare each of them
+        for key in settings_dict_in_type.keys():
+            current_type = settings_dict_in_type[key]
+            correct_type = correct_type_of_settings[key]
+            if current_type != correct_type:
+                raise TypeError(f'Settings {key} must be a {correct_type} not a {current_type}, but {current_type} was given')
+        return True
+    except TypeError as e:
+        print_error('An error occured when loading settings in ./Data/settings.json : ' + str(e))
+        print_warn('It must be something wrong in your settings, check it')
+        return False
+    except Exception as e:
+        print_error('An error occured : ' + str(e))
+        return False
+    else:
+        return True
 
 if __name__ == '__main__':
     '''Program entry'''
-    version = 'v0.1.6'
+    version = 'v0.1.6.2'
     print('\033[0;35m' + fr"""
 
 ===========================================================================
@@ -486,10 +531,17 @@ if __name__ == '__main__':
         history_file = open("./Data/History.config", 'w')
         History_write("Initializing")
     else:
-        with open("./Data/settings.json", 'r') as f:
-            settings_data = json.load(f)
+        try:
+            with open("./Data/settings.json", 'r') as f:
+                settings_data = json.load(f)
+        except Exception as e:
+            print_error('An error occured when loading settings in ./Data/settings.json : ' + str(e))
+            print_warn('It must be something wrong in your settings, check it')
+            _exit(0)
         history_file = open("./Data/History.config", 'a')
     print_normal("Using settings from ./Data/settings.json")
+    if not check_data_in_settings(settings_data):
+        _exit(0)
     History_write("Opening")
     # Get the ip and port from inputing
     ip = check_input("ip", "ip_mode")
