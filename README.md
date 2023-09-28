@@ -1,9 +1,10 @@
 <h1 align="center">ArcticWolf🐺 -- use a computer and a frp to set up your botnet and launch ddos attacks!</h1>
 <em><h3 align="center">The easy and fast way to organize a botnet for ddos and launch an attack</h3></em>
 <p align="center">
-<img src="https://img.shields.io/badge/Python-3.7+-green" alt="Python" />  <img src="https://img.shields.io/badge/State-developing-blue" alt="State" />
-<img src="https://img.shields.io/badge/Platform-Windows-orange" alt="Platform" />
-<img src="https://img.shields.io/badge/License-Apache2.0-red" alt="License" /></p>
+![Python Version](https://img.shields.io/badge/python-3.7+-blue?style=for-the-badge)
+![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
+![State](https://img.shields.io/badge/State-Developing-red?style=for-the-badge)
+![Platform](https://img.shields.io/badge/Platform-Windows-orange?style=for-the-badge)
 <em><h5 align="center">virus generater, botnet controller and DDOS attacker under python3</h5></em>
 
 ## 📸Highlights
@@ -17,11 +18,12 @@
 * [pyinstaller 5.13.2](https://github.com/pyinstaller/pyinstaller)
 * [upx 4.0 (for best)](https://github.com/upx/upx)
 * [pywin32 306](https://github.com/mhammond/pywin32)
+* [PySimpleGUI 4.60.5](https://github.com/PySimpleGUI/PySimpleGUI)
 * [python 3.7](https://python.org)
 
 command to install all :
 ```sh
-pip install pyinstaller==5.13.2 pywin32==306
+pip install pyinstaller==5.13.2 pywin32==306 PySimpleGUI==4.60.5
 ```
 👋**Install & Start**
 * Install
