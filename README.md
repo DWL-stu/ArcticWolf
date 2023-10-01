@@ -45,11 +45,17 @@ python main.py
 
 🦠**virus settings**  
 * set your own config at ./Data/settings.json
+
   * Threads_num : number of threads
+
   * Attribute_hide : file attribute hide
+
   * self_starting : Modify the registry to implement self-start
+
   * Password : Password to connect the botnet
+
   * etc.
+  
 * The log will be recorded in ./Data/History.config
      
 ## 🦸Maintainers

